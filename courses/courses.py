@@ -38,8 +38,8 @@ def append_course():
     '''   
     while (True):
        
-        course_id = str(input("enter course id "))
-        course_name = str(input("enter course name "))
+        course_id = str(input("enter course id \n"))
+        course_name = str(input("enter course name \n"))
     
         marks = {} 
         dict={'Course ID': course_id,'Course Name':course_name,'Marks Obtained':marks}        
@@ -74,21 +74,20 @@ def update_course(course_id, std_id, marks, oper):
             df.to_csv(path, index=False)                
             break
 
-    return True
+    return df
 
 
-def view_perf():
+def view_perf(course_id):
     '''
     View performance in specific course
     '''
-    course_id=str(input("Enter the course id choice"))
-    df_std=pd.read_csv(path_std)
+    ##course_id=str(input("Enter the course id choice"))
     df_course=pd.read_csv(path)
 
-    print('Class Roll No.','Name','Marks Obtained')
+    print('Student ID', 'Marks')
     for i in range(len(df_course['Course ID'])):
         if course_id == df_course['Course ID'][i]:
-            print(df_std['Class Roll No.'],df_std['Name'],df_course['Marks Obtained'])
+            print(df_course['Marks Obtained'][0], df_course['Marks Obtained'][1])
     return True
 
 

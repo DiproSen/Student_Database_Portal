@@ -30,22 +30,21 @@ def append_batch():
     Append Batch Details
     '''
     while (True):
-        batch_id=str(input("enter batch id ")) 
-        batch_name=str(input("enter batch name "))     
-        dept_id=str(input("enter dept id "))    
+        batch_id=str(input("enter batch id \n")) 
+        batch_name=str(input("enter batch name \n"))     
+        dept_id=str(input("enter dept id \n"))    
         l_course=[]
         
         while(True):
-            ch=str(input("Do you want to add courses? "))
+            ch=str(input("Do you want to add courses? Please enter Y or N\n"))
             if ch=='y' or ch=='Y':
-
-                bch=str(input("Enter course name "))
+                bch=str(input("Enter course name \n"))
                 l_course.append(bch)
             else:
                 break
 
         df = pd.read_csv(path)
-        if df['List of Students']:
+        if len(df['List of Students']) != 0:
             l_std = df['List of Students']
         else:
             l_std = []
