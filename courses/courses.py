@@ -4,7 +4,7 @@ Course Database Functions
 import csv
 import os
 import pandas as pd
-import ast
+from matplotlib import pyplot as plt
 
 path_std = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'databases', 'Students.csv')
 path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'databases', 'Courses.csv')
@@ -41,7 +41,7 @@ def append_course():
         course_id = str(input("enter course id \n"))
         course_name = str(input("enter course name \n"))
     
-        marks = {} 
+        marks = '' 
         dict={'Course ID': course_id,'Course Name':course_name,'Marks Obtained':marks}        
 
         with open(path,'a',newline='', encoding='utf-8') as new_file2:
@@ -63,13 +63,13 @@ def update_course(course_id, std_id, marks, oper):
 
     for i in range(len(df['Course ID'])):
         if course_id == df['Course ID'][i]:
-            marks_obtained = ast.literal_eval(df.loc[i]['Marks Obtained'])
+            marks_obtained = df['Marks Obtained'][i]
             course_name = df['Course Name'][i]
 
-            if oper != 'del':                
-                marks_obtained[std_id] = marks
+            if (oper != 'del') and not (pd.isna(df['Marks Obtained'][i])):                
+                marks_obtained = str(marks_obtained) + '-' + str(std_id) + ':' + str(marks)
             else:
-                marks_obtained.pop[std_id]
+                marks_obtained = str(std_id) + ':' + str(marks)
             df.loc[i]=[course_id,course_name,marks_obtained]
             df.to_csv(path, index=False)                
             break
@@ -84,10 +84,10 @@ def view_perf(course_id):
     ##course_id=str(input("Enter the course id choice"))
     df_course=pd.read_csv(path)
 
-    print('Student ID', 'Marks')
+    print('StudentID:Marks')
     for i in range(len(df_course['Course ID'])):
         if course_id == df_course['Course ID'][i]:
-            print(df_course['Marks Obtained'][0], df_course['Marks Obtained'][1])
+            print(df_course['Marks Obtained'][i])
     return True
 
 
@@ -95,11 +95,46 @@ def course_stat():
     '''
     Histogram showing  no. of students  Vs grades
     '''             
-    
+    course_id = str(input("enter course id \n"))
+    df = pd.read_csv(path)
 
+    marks_obtained = ''
 
+    for i in range(len(df['Course ID'])):
+        if course_id == df['Course ID'][i]:
+            marks_obtained = df['Marks Obtained'][i]
+
+    grade = ['A','B','C','D','E','F']
+    std_a = 0
+    std_b = 0
+    std_c = 0
+    std_d = 0
+    std_e = 0
+    std_f = 0
+    for i in marks_obtained.split('-'):
+
+        if int(i.split(':')[1]) >= 90:
+            std_a = std_a + 1 
+        elif int(i.split(':')[1]) >= 80:
+            std_b = std_b + 1
+        elif int(i.split(':')[1]) >= 70:
+            std_c = std_c + 1
+        elif int(i.split(':')[1]) >= 60:
+            std_d = std_d + 1
+        elif int(i.split(':')[1]) >= 50:
+            std_e = std_e + 1
+        elif int(i.split(':')[1]) < 50:
+            std_f = std_f + 1
+
+    num_std = [std_a, std_b, std_c, std_d, std_e, std_f]    
+    plt.bar(grade, num_std)
+    plt.show()
 
     return True
+
+
+def count(list1, l, r):
+    return len(list(filter(lambda x: l <= x <= r, list1)))
 
 
 def exit_course():
@@ -136,7 +171,8 @@ def course():
             if choice == '1':
                 append_course()
             elif choice == '2':
-                view_perf()
+                c_id = str(input("enter course id \n"))
+                view_perf(c_id)
             elif choice == '3':
                 course_stat()
             else:

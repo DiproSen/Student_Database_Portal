@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import ast
 from departments.departments import update_dept_batch
+from courses.courses import view_perf
 
 path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'databases', 'Batches.csv')
 path_std = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'databases', 'Students.csv')
@@ -33,21 +34,20 @@ def append_batch():
         batch_id=str(input("enter batch id \n")) 
         batch_name=str(input("enter batch name \n"))     
         dept_id=str(input("enter dept id \n"))    
-        l_course=[]
+        l_course=''
         
         while(True):
             ch=str(input("Do you want to add courses? Please enter Y or N\n"))
             if ch=='y' or ch=='Y':
                 bch=str(input("Enter course name \n"))
-                l_course.append(bch)
+                if l_course != '':
+                    l_course = str(l_course) + ':' + str(bch)
+                else:
+                    l_course = str(bch)
             else:
                 break
 
-        df = pd.read_csv(path)
-        if len(df['List of Students']) != 0:
-            l_std = df['List of Students']
-        else:
-            l_std = []
+        l_std = ''
          
         # while(True):
         #     ch=str(input("Do you want to add students? "))
@@ -78,19 +78,19 @@ def update_batch_std(batch_id, value, oper):
     df = pd.read_csv(path)
 
     if len(df['BatchID']) == 0:
-        print("Database is empty. Please enter record.")
+        print("Batch Database is empty. Please enter batch record.")
         return True
 
     for i in range(len(df['BatchID'])):
         if batch_id == df['BatchID'][i]:
-            l_std = ast.literal_eval(df.loc[i]['List of Students'])
+            l_std = df['List of Students'][i]
             batch_name = df['Batch Name'][i]
             dept_id = df['Department_ID'][i]
-            l_course = ast.literal_eval(df.loc[i]['List of Courses'])
-            if oper != 'del':                
-                l_std.append(value)
+            l_course = df['List of Courses'][i]
+            if (oper != 'del') and not (pd.isna(df['List of Students'][i])):                
+                l_std = str(l_std) + ':' + value
             else:
-                l_std.remove(value)
+                l_std = value
             df.loc[i]=[batch_id,batch_name,dept_id,l_course,l_std]
             df.to_csv(path, index=False)                
             break
@@ -103,10 +103,11 @@ def view_std():
     View all Students in specific batch
     '''
     batch_id=str(input("enter batch id choice\n"))
+    print("List of Students")
     df_batch=pd.read_csv(path)
     for i in range(len(df_batch['BatchID'])):
         if batch_id == df_batch['BatchID'][i]:
-            print(ast.literal_eval(df_batch.loc[i]['List of Students']))
+            print(df_batch['List of Students'][i])
 
     return True
 
@@ -116,10 +117,11 @@ def view_course():
     View all courses in specific batch
     '''
     batch_id=str(input("enter batch id choice\n"))
+    print("List of Courses")
     df_batch=pd.read_csv(path)
     for i in range(len(df_batch['BatchID'])):
         if batch_id == df_batch['BatchID'][i]:
-            print(ast.literal_eval(df_batch.loc[i]['List of Courses']))
+            print(df_batch['List of Courses'][i])
 
     return True
 
@@ -128,12 +130,19 @@ def view_perf_std_batch():
     '''
     View complete performance of all students in a batch
     '''
+    batch_id=str(input("enter batch id choice\n"))
+    df_batch=pd.read_csv(path)
+    for i in range(len(df_batch['BatchID'])):
+        if batch_id == df_batch['BatchID'][i]:
+            lst_course = df_batch['List of Courses'][i]
+            for course_id in lst_course:
+                view_perf(course_id)
     return True
 
 
 def pie_chart():
     '''
-    View Pie Chart of Percentage of all students?
+    View Pie Chart of Percentage of all students
     '''
 
     return True

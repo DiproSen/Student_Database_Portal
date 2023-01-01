@@ -43,7 +43,7 @@ def append_dept():
         dept_id=str(input("enter department id "))      
         dept_name=str(input("enter department name "))
               
-        lst_batches=[]
+        lst_batches=''
 
         dict={'Department_ID':dept_id,'Department_Name':dept_name,'List of Batches':lst_batches}
                 
@@ -63,7 +63,7 @@ def view_batch():
     df_dept=pd.read_csv(path)
     for i in range(len(df_dept['Department_ID'])):
         if dept_id in df_dept['Department_ID'][i]:
-            print(ast.literal_eval(df_dept.loc[i]['List of Batches']))
+            print(df_dept.loc[i]['List of Batches'])
 
     return True
 
@@ -104,12 +104,12 @@ def update_dept_batch(dept_id, value, oper):
 
     for i in range(len(df['Department_ID'])):
         if dept_id == df['Department_ID'][i]:
-            lst_batches = ast.literal_eval(df.loc[i]['List of Batches'])
+            lst_batches = df['List of Batches'][i]
             dept_name = df['Department_Name'][i]
-            if oper != 'del':                
-                lst_batches.append(value)
+            if (oper != 'del') and not (pd.isna(df['List of Batches'][i])):                
+                lst_batches = str(lst_batches) + ':' + value
             else:
-                lst_batches.remove(value)
+                lst_batches = value
             df.loc[i]=[dept_id,dept_name,lst_batches]
             df.to_csv(path, index=False)                
             break
