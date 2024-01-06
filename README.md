@@ -1,1 +1,1 @@
-This project demonstrates the creation and implementation of a student database portal. The portal effectively groups students based on their courses, batches and departments.
+The portal is implemented using a user-friendly interface, making it accessible for administrators, faculty, and staff. The database efficiently stores and retrieves student information based on the established groupings.
